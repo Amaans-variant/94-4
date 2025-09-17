@@ -66,7 +66,8 @@ export const courses: Course[] = [
     eligibility: '12th with PCM (75%+)',
     careerPaths: ['Software Engineer', 'Data Scientist', 'AI Specialist', 'Product Manager'],
     averageSalary: 800000,
-    stream: 'Science'
+    stream: 'Science',
+    website: 'https://www.iitd.ac.in/academics/departments/computer-science'
   },
   {
     id: '2',
@@ -75,7 +76,8 @@ export const courses: Course[] = [
     eligibility: '12th (50%+)',
     careerPaths: ['Business Analyst', 'Marketing Manager', 'Operations Manager', 'Entrepreneur'],
     averageSalary: 500000,
-    stream: 'Commerce'
+    stream: 'Commerce',
+    website: 'https://www.du.ac.in/academics/bba'
   },
   {
     id: '3',
@@ -84,7 +86,8 @@ export const courses: Course[] = [
     eligibility: '12th (45%+)',
     careerPaths: ['Clinical Psychologist', 'Counselor', 'HR Specialist', 'Researcher'],
     averageSalary: 400000,
-    stream: 'Arts'
+    stream: 'Arts',
+    website: 'https://www.du.ac.in/academics/psychology'
   },
   {
     id: '4',
@@ -93,7 +96,8 @@ export const courses: Course[] = [
     eligibility: '12th (40%+)',
     careerPaths: ['Digital Marketer', 'Social Media Manager', 'Content Creator', 'SEO Specialist'],
     averageSalary: 350000,
-    stream: 'Vocational'
+    stream: 'Vocational',
+    website: 'https://www.siu.edu.in/academics/digital-marketing'
   }
 ];
 
@@ -103,6 +107,7 @@ export const colleges: College[] = [
     name: 'Indian Institute of Technology Delhi',
     location: 'New Delhi, Delhi',
     type: 'Government',
+    website: 'https://www.iitd.ac.in',
     courses: [courses[0]],
     fees: 200000,
     rating: 4.8,
@@ -116,6 +121,7 @@ export const colleges: College[] = [
     name: 'Delhi University',
     location: 'New Delhi, Delhi', 
     type: 'Government',
+    website: 'https://www.du.ac.in',
     courses: [courses[1], courses[2]],
     fees: 50000,
     rating: 4.5,
@@ -129,6 +135,7 @@ export const colleges: College[] = [
     name: 'Symbiosis International University',
     location: 'Pune, Maharashtra',
     type: 'Private',
+    website: 'https://www.siu.edu.in',
     courses: [courses[1], courses[3]],
     fees: 300000,
     rating: 4.3,

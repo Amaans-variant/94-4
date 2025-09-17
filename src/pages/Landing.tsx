@@ -78,12 +78,28 @@ const testimonials = [
   }
 ];
 
-export const Landing: React.FC = () => {
+interface LandingProps {
+  isDarkMode?: boolean;
+}
+
+export const Landing: React.FC<LandingProps> = ({ isDarkMode = false }) => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/4050290/pexels-photo-4050290.jpeg')] bg-cover bg-center opacity-5"></div>
+      <section className={`relative py-20 lg:py-32 overflow-hidden transition-colors duration-300 ${
+        isDarkMode 
+          ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-blue-900' 
+          : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
+      }`}>
+        <div className={`absolute inset-0 bg-[url('https://images.pexels.com/photos/4050290/pexels-photo-4050290.jpeg')] bg-cover bg-center ${
+          isDarkMode ? 'opacity-10' : 'opacity-5'
+        }`}></div>
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-40 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style={{ animationDelay: '4s' }}></div>
+        </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
@@ -92,30 +108,50 @@ export const Landing: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                <h1 className={`text-4xl lg:text-6xl font-bold leading-tight ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
                   Find Your Perfect 
-                  <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-glow">
                     Educational Path
                   </span>
                 </h1>
-                <p className="mt-6 text-lg lg:text-xl text-gray-600 leading-relaxed">
+                <p className={`mt-6 text-lg lg:text-xl leading-relaxed ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>
                   Discover courses, colleges, and career opportunities tailored just for you. 
                   Make informed decisions about your future with our AI-powered guidance platform.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                  <Link
-                    to="/quiz"
-                    className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="inline-block"
                   >
-                    Take Career Quiz
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                  <Link
-                    to="/colleges"
-                    className="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-lg font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300 transition-all duration-200"
+                    <Link
+                      to="/quiz"
+                      className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-2xl transform transition-all duration-300 animate-pulse-slow"
+                    >
+                      Take Career Quiz
+                      <ArrowRight className="ml-2 h-5 w-5 animate-bounce" />
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="inline-block"
                   >
-                    Explore Colleges
-                  </Link>
+                    <Link
+                      to="/colleges"
+                      className={`inline-flex items-center justify-center px-8 py-4 border-2 text-lg font-medium rounded-xl transition-all duration-300 ${
+                        isDarkMode 
+                          ? 'border-gray-600 text-gray-300 bg-gray-800 hover:bg-gray-700 hover:border-blue-400' 
+                          : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-blue-300'
+                      }`}
+                    >
+                      Explore Colleges
+                    </Link>
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
@@ -150,7 +186,7 @@ export const Landing: React.FC = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className={`py-16 transition-colors duration-300 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {stats.map((stat, index) => (
@@ -159,10 +195,11 @@ export const Landing: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center"
+                whileHover={{ scale: 1.05 }}
+                className="text-center p-6 rounded-xl hover:shadow-lg transition-all duration-300"
               >
-                <div className="text-3xl lg:text-4xl font-bold text-blue-600">{stat.number}</div>
-                <div className="mt-2 text-sm lg:text-base text-gray-600">{stat.label}</div>
+                <div className="text-3xl lg:text-4xl font-bold text-blue-600 animate-bounce-in">{stat.number}</div>
+                <div className={`mt-2 text-sm lg:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -170,17 +207,26 @@ export const Landing: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-50">
+      <section className={`py-20 transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className={`text-3xl lg:text-4xl font-bold mb-4 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>
               Everything You Need to Plan Your Future
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className={`text-lg max-w-2xl mx-auto ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
               From personalized assessments to college recommendations, we provide all the tools 
               you need to make informed educational decisions.
             </p>
-          </div>
+          </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
@@ -189,13 +235,26 @@ export const Landing: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow duration-200"
+                whileHover={{ scale: 1.05, y: -5 }}
+                className={`rounded-xl p-6 shadow-sm hover:shadow-2xl transition-all duration-300 ${
+                  isDarkMode 
+                    ? 'bg-gray-800 hover:bg-gray-700 border border-gray-700' 
+                    : 'bg-white hover:bg-gray-50'
+                }`}
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
+                <motion.div 
+                  className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4"
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <feature.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                </motion.div>
+                <h3 className={`text-xl font-semibold mb-2 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>{feature.title}</h3>
+                <p className={`leading-relaxed ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -203,16 +262,25 @@ export const Landing: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-white">
+      <section className={`py-20 transition-colors duration-300 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className={`text-3xl lg:text-4xl font-bold mb-4 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>
               What Students Say About Us
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className={`text-lg ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
               Join thousands of students who have found their perfect educational path
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
@@ -221,23 +289,34 @@ export const Landing: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6"
+                whileHover={{ scale: 1.05, y: -5 }}
+                className={`rounded-xl p-6 transition-all duration-300 ${
+                  isDarkMode 
+                    ? 'bg-gradient-to-br from-gray-700 to-gray-800 border border-gray-600' 
+                    : 'bg-gradient-to-br from-blue-50 to-purple-50'
+                }`}
               >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4 italic">"{testimonial.quote}"</p>
+                <p className={`mb-4 italic ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>"{testimonial.quote}"</p>
                 <div className="flex items-center">
                   <img 
                     src={testimonial.image} 
                     alt={testimonial.name}
-                    className="w-10 h-10 rounded-full mr-3"
+                    className="w-10 h-10 rounded-full mr-3 border-2 border-blue-500"
                   />
                   <div>
-                    <div className="font-medium text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-gray-600">{testimonial.class}</div>
+                    <div className={`font-medium ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>{testimonial.name}</div>
+                    <div className={`text-sm ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                    }`}>{testimonial.class}</div>
                   </div>
                 </div>
               </motion.div>
@@ -247,14 +326,21 @@ export const Landing: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse-slow"></div>
+          <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full animate-float"></div>
+          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-white/10 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+        </div>
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6 animate-glow">
               Ready to Find Your Perfect Path?
             </h2>
             <p className="text-xl text-blue-100 mb-8 leading-relaxed">
@@ -262,19 +348,29 @@ export const Landing: React.FC = () => {
               Start with our free career assessment today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/signup"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-xl text-blue-600 bg-white hover:bg-gray-50 transform hover:scale-105 transition-all duration-200"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-              <Link
-                to="/quiz"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-xl text-white border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-200"
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-xl text-blue-600 bg-white hover:bg-gray-50 transform transition-all duration-300 shadow-2xl"
+                >
+                  Get Started Free
+                  <ArrowRight className="ml-2 h-5 w-5 animate-bounce" />
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Take Career Quiz
-              </Link>
+                <Link
+                  to="/quiz"
+                  className="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-xl text-white border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-300 shadow-2xl"
+                >
+                  Take Career Quiz
+                </Link>
+              </motion.div>
             </div>
           </motion.div>
         </div>

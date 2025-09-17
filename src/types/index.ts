@@ -28,6 +28,7 @@ export interface College {
   name: string;
   location: string;
   type: 'Government' | 'Private' | 'Deemed';
+  website?: string;
   courses: Course[];
   fees: number;
   rating: number;
@@ -45,6 +46,7 @@ export interface Course {
   careerPaths: string[];
   averageSalary: number;
   stream: 'Science' | 'Commerce' | 'Arts' | 'Vocational';
+  website?: string;
 }
 
 export interface Recommendation {

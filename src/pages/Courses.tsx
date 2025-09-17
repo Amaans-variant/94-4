@@ -43,7 +43,11 @@ const streamDistribution = [
   { name: 'Vocational', value: 10, color: '#F59E0B' }
 ];
 
-export const Courses: React.FC = () => {
+interface CoursesProps {
+  isDarkMode?: boolean;
+}
+
+export const Courses: React.FC<CoursesProps> = ({ isDarkMode = false }) => {
   const [selectedStream, setSelectedStream] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCourse, setSelectedCourse] = useState(courses[0]);

@@ -16,7 +16,11 @@ import {
 import { colleges } from '../data/mockData';
 import { College } from '../types';
 
-export const Colleges: React.FC = () => {
+interface CollegesProps {
+  isDarkMode?: boolean;
+}
+
+export const Colleges: React.FC<CollegesProps> = ({ isDarkMode = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     type: '',
@@ -51,8 +55,14 @@ export const Colleges: React.FC = () => {
     return `₹${(fees / 1000)}K`;
   };
 
+  const handleWebsiteClick = (website: string) => {
+    if (website) {
+      window.open(website, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className={`min-h-screen py-8 transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -61,8 +71,12 @@ export const Colleges: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Your Perfect College</h1>
-          <p className="text-lg text-gray-600">
+          <h1 className={`text-3xl font-bold mb-2 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>Find Your Perfect College</h1>
+          <p className={`text-lg ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>
             Explore thousands of colleges and universities across India
           </p>
         </motion.div>
@@ -165,10 +179,14 @@ export const Colleges: React.FC = () => {
 
         {/* Results */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600">
+          <p className={`${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>
             Showing {filteredColleges.length} college{filteredColleges.length !== 1 ? 's' : ''}
           </p>
-          <div className="text-sm text-gray-500">
+          <div className={`text-sm ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
+          }`}>
             {savedColleges.length} saved
           </div>
         </div>
@@ -181,7 +199,12 @@ export const Colleges: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-200 overflow-hidden"
+              whileHover={{ scale: 1.02, y: -5 }}
+              className={`rounded-xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden ${
+                isDarkMode 
+                  ? 'bg-gray-800 border border-gray-700' 
+                  : 'bg-white'
+              }`}
             >
               {/* College Image */}
               <div className="relative h-48 overflow-hidden">
@@ -218,18 +241,24 @@ export const Colleges: React.FC = () => {
               {/* College Info */}
               <div className="p-6">
                 <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-2 flex-1 mr-2">
+                  <h3 className={`text-xl font-semibold line-clamp-2 flex-1 mr-2 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
                     {college.name}
                   </h3>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                    <span className="text-sm font-medium text-gray-700 ml-1">
+                    <span className={`text-sm font-medium ml-1 ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       {college.rating}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center text-gray-600 mb-4">
+                <div className={`flex items-center mb-4 ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
                   <MapPin className="h-4 w-4 mr-1" />
                   <span className="text-sm">{college.location}</span>
                 </div>
@@ -279,12 +308,24 @@ export const Colleges: React.FC = () => {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <button className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-shadow text-sm font-medium">
+                  <button className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 text-sm font-medium">
                     View Details
                   </button>
-                  <button className="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                    <ExternalLink className="h-4 w-4" />
-                  </button>
+                  {college.website && (
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleWebsiteClick(college.website)}
+                      className={`px-3 py-2 border rounded-lg transition-all duration-300 ${
+                        isDarkMode 
+                          ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                      title="Visit College Website"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </motion.button>
+                  )}
                 </div>
               </div>
             </motion.div>
