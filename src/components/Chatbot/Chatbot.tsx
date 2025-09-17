@@ -2,13 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Send, X, Bot, User, Minimize2, Maximize2, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChatMessage } from '../../types';
+import { generateAIResponse } from '../../lib/openai';
 
 interface ChatbotProps {
   isAuthenticated?: boolean;
   userName?: string;
+  isDarkMode?: boolean;
 }
 
-export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userName = 'Student' }) => {
+export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userName = 'Student', isDarkMode = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -61,10 +63,9 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-      
-      const botResponse = await generateBotResponse(inputMessage.trim(), isAuthenticated, userName);
+      // Use real AI API
+      const context = isAuthenticated ? `User: ${userName}, Authenticated: true` : 'User: Guest, Authenticated: false';
+      const botResponse = await generateAIResponse(inputMessage.trim(), context);
       const botMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         message: botResponse,
@@ -87,95 +88,6 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
     }
   };
 
-  const generateBotResponse = async (userInput: string, authenticated: boolean, name: string): Promise<string> => {
-    const input = userInput.toLowerCase();
-    
-    // Greeting responses
-    if (input.includes('hello') || input.includes('hi') || input.includes('hey')) {
-      return authenticated 
-        ? `Hello ${name}! Great to see you again. What would you like to explore today?`
-        : 'Hello! Welcome to EduPath Advisor. I\'m here to help you navigate your educational journey. What can I assist you with?';
-    }
-
-    // Course-related queries
-    if (input.includes('course') || input.includes('subject') || input.includes('stream')) {
-      if (input.includes('science')) {
-        return 'Science stream offers exciting opportunities! 🔬 Popular courses include:\n\n• B.Tech (Engineering) - Computer Science, Mechanical, Electrical\n• MBBS (Medicine) - High competition, rewarding career\n• B.Sc - Physics, Chemistry, Mathematics, Biology\n• Pharmacy, Biotechnology, Environmental Science\n\nWould you like detailed information about any specific course or career prospects?';
-      }
-      if (input.includes('commerce')) {
-        return 'Commerce stream opens doors to business and finance! 💼 Top courses include:\n\n• B.Com - Accounting, Finance, Economics\n• BBA - Business Administration and Management\n• CA/CPA - Chartered Accountancy (high earning potential)\n• Economics, Statistics, Banking & Insurance\n\nI can help you understand admission requirements and career paths. What interests you most?';
-      }
-      if (input.includes('arts') || input.includes('humanities')) {
-        return 'Arts/Humanities offers diverse creative and analytical paths! 🎨 Popular options:\n\n• BA - Literature, History, Psychology, Sociology\n• Mass Communication & Journalism\n• Law (5-year integrated programs)\n• Fine Arts, Design, Fashion Technology\n• Social Work, Political Science\n\nThese fields offer great opportunities in media, government, NGOs, and creative industries. Need specific guidance?';
-      }
-      return authenticated
-        ? `Based on your profile, I can suggest personalized courses! The main streams after 12th are:\n\n🔬 **Science** - Engineering, Medicine, Research\n💼 **Commerce** - Business, Finance, Accounting\n🎨 **Arts** - Literature, Social Sciences, Creative fields\n⚡ **Vocational** - Skill-based, industry-ready programs\n\nTake our aptitude quiz for personalized recommendations, or tell me about your interests!`
-        : 'I can help you explore various courses! The main streams are Science, Commerce, Arts, and Vocational. For personalized recommendations based on your interests and aptitude, I suggest taking our quiz or logging in for a customized experience. What field interests you most?';
-    }
-    
-    // College-related queries
-    if (input.includes('college') || input.includes('university') || input.includes('admission')) {
-      if (input.includes('engineering') || input.includes('iit') || input.includes('nit')) {
-        return 'Engineering colleges in India! 🏛️ Top options include:\n\n**Government (Lower Fees):**\n• IITs - Premium institutes, JEE Advanced required\n• NITs - Excellent reputation, JEE Main cutoffs\n• State Engineering Colleges\n\n**Private (Higher Fees):**\n• BITS Pilani, VIT, SRM, Manipal\n• Good placement records\n\nAdmission through JEE Main/Advanced. Want help finding colleges in your area or budget range?';
-      }
-      if (input.includes('medical') || input.includes('mbbs') || input.includes('neet')) {
-        return 'Medical colleges require NEET qualification! 🏥\n\n**Government Medical Colleges:**\n• AIIMS - Top-tier, highly competitive\n• State Medical Colleges - Lower fees\n• JIPMER, PGIMER\n\n**Private Medical Colleges:**\n• Higher fees (₹50L+ for MBBS)\n• Deemed universities\n\nNEET score determines admission. Current cutoffs are very high. Would you like preparation tips or college-specific information?';
-      }
-      return authenticated
-        ? `I can help you find colleges based on your preferences! Our database includes:\n\n• 500+ colleges across India\n• Filter by location, fees, courses\n• Government vs Private options\n• Hostel facilities and medium of instruction\n\nVisit our Colleges page or tell me your specific requirements (location, budget, course) for personalized suggestions!`
-        : 'Our college directory has 500+ institutions! You can search by location, course, fees, and facilities. For personalized college recommendations based on your profile and preferences, please log in. What type of college are you looking for?';
-    }
-    
-    // Career guidance
-    if (input.includes('career') || input.includes('job') || input.includes('salary') || input.includes('future')) {
-      return authenticated
-        ? `Career planning is crucial, ${name}! 🚀 Based on your interests, here are some high-growth fields:\n\n**Technology:** Software Development, Data Science, AI/ML, Cybersecurity\n**Healthcare:** Medicine, Nursing, Physiotherapy, Medical Technology\n**Business:** Digital Marketing, Finance, Consulting, Entrepreneurship\n**Creative:** Design, Content Creation, Media, Entertainment\n\nTake our career assessment quiz for detailed recommendations with salary insights and growth prospects!`
-        : 'Career planning is essential! 🎯 Popular high-growth careers include:\n\n• Technology (Software, Data Science, AI)\n• Healthcare (Medicine, Allied Health)\n• Business & Finance\n• Creative & Media fields\n\nFor personalized career recommendations based on your interests and aptitude, take our quiz or log in for detailed guidance!';
-    }
-    
-    // Quiz-related queries
-    if (input.includes('quiz') || input.includes('test') || input.includes('assessment') || input.includes('aptitude')) {
-      return 'Our aptitude quiz is designed to discover your strengths! 📊\n\n**What it includes:**\n• 15-20 questions covering different aptitudes\n• Logical, creative, analytical, and practical scenarios\n• Takes about 10-15 minutes\n• Instant results with detailed analysis\n\n**You\'ll get:**\n• Recommended stream (Science/Commerce/Arts/Vocational)\n• Matching percentage for each field\n• Suggested career paths\n• College recommendations\n\nReady to discover your ideal path? Click the "Take Career Quiz" button!';
-    }
-    
-    // Exam-related queries
-    if (input.includes('exam') || input.includes('jee') || input.includes('neet') || input.includes('entrance')) {
-      return 'Important entrance exams in India! 📚\n\n**Engineering:**\n• JEE Main (April & May) - For NITs, IIITs\n• JEE Advanced (June) - For IITs\n• State CETs - For state colleges\n\n**Medical:**\n• NEET UG (May) - For MBBS, BDS\n• AIIMS, JIPMER (now through NEET)\n\n**Other Fields:**\n• CLAT (Law), CAT (MBA), GATE (M.Tech)\n\nCheck our Timeline page for exact dates and deadlines. Need preparation tips for any specific exam?';
-    }
-
-    // Scholarship queries
-    if (input.includes('scholarship') || input.includes('financial aid') || input.includes('fee') || input.includes('money')) {
-      return 'Scholarships can significantly reduce education costs! 💰\n\n**Government Scholarships:**\n• National Scholarship Portal (NSP)\n• Merit-based and need-based options\n• SC/ST/OBC specific schemes\n• State government scholarships\n\n**Private Scholarships:**\n• Corporate CSR programs\n• Educational foundations\n• Merit-based awards\n\n**Tips:**\n• Apply early, maintain good grades\n• Keep all documents ready\n• Check eligibility criteria carefully\n\nVisit our Timeline page for application deadlines!';
-    }
-
-    // Location-based queries
-    if (input.includes('near me') || input.includes('location') || input.includes('city')) {
-      return 'Finding colleges near you! 📍\n\nOur college directory includes:\n• Interactive map view\n• Distance-based search\n• Local transportation info\n• Hostel availability\n\nUse our Colleges page with location filters, or tell me your city/state for specific recommendations. You can also filter by:\n• Course availability\n• Fee range\n• Government vs Private\n• Medium of instruction';
-    }
-
-    // Help with navigation
-    if (input.includes('how to') || input.includes('navigate') || input.includes('use') || input.includes('help')) {
-      return 'I\'m here to help you navigate EduPath Advisor! 🧭\n\n**Main Features:**\n• **Quiz** - Discover your ideal stream\n• **Courses** - Explore career paths with salary data\n• **Colleges** - Find institutions with filters & map\n• **Timeline** - Track important deadlines\n• **Dashboard** - Your personalized recommendations\n\n**Tips:**\n• Start with the aptitude quiz\n• Save colleges you\'re interested in\n• Set deadline reminders\n• Explore career growth charts\n\nWhat would you like to explore first?';
-    }
-
-    // Motivational/encouragement
-    if (input.includes('confused') || input.includes('don\'t know') || input.includes('help me choose') || input.includes('lost')) {
-      return authenticated
-        ? `It\'s completely normal to feel confused about your future, ${name}! 🤗 Many students go through this.\n\n**Here\'s what I suggest:**\n1. Take our aptitude quiz - it reveals hidden strengths\n2. Explore different career paths and their day-to-day reality\n3. Talk to professionals in fields that interest you\n4. Consider your natural talents and what energizes you\n\n**Remember:**\n• There\'s no single "right" path\n• You can always pivot and grow\n• Your interests may evolve - that\'s okay!\n\nLet\'s start with the quiz to give you some direction. You\'ve got this! 💪`
-        : 'Feeling confused about your future is completely normal! 🤗 Every successful person has been where you are.\n\n**Let\'s break it down:**\n1. Start with our aptitude quiz to identify your strengths\n2. Explore different career paths and their realities\n3. Consider what activities make you lose track of time\n4. Think about problems you\'d love to solve\n\nRemember, there\'s no single "perfect" path. The key is to start exploring and stay curious. Ready to take the first step with our quiz?';
-    }
-
-    // Default responses with context awareness
-    const defaultResponses = [
-      `That's an interesting question! I specialize in educational guidance and can help you with:\n\n• Course selection and career paths\n• College recommendations and admissions\n• Entrance exam information\n• Scholarship opportunities\n• Timeline planning\n\nCould you tell me more about what specific aspect of your education you'd like to explore?`,
-      
-      `I'd love to help you with that! As your educational advisor, I can assist with:\n\n🎓 **Academic Planning** - Courses, streams, career mapping\n🏛️ **College Selection** - Find the perfect fit for you\n📊 **Assessments** - Discover your strengths and interests\n📅 **Timeline Management** - Never miss important deadlines\n\nWhat would you like to know more about?`,
-      
-      `Great question! I'm here to guide you through your educational journey. Whether you're curious about:\n\n• Different career options and their prospects\n• Admission requirements and processes\n• Scholarship and financial aid options\n• Study tips and exam preparation\n\nI'm here to help! What's on your mind?`
-    ];
-
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -252,7 +164,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
             }}
             exit={{ opacity: 0, y: 100, scale: 0.3, x: -20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed bottom-24 left-6 z-50 w-80 sm:w-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
+            className={`fixed bottom-24 left-6 z-50 w-80 sm:w-96 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg shadow-2xl border flex flex-col overflow-hidden`}
             style={{ maxHeight: '70vh' }}
           >
             {/* Header */}
@@ -293,7 +205,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
             {/* Messages */}
             {!isMinimized && (
               <>
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
                   {messages.map((message) => (
                     <motion.div
                       key={message.id}
@@ -308,7 +220,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
                         <div className={`p-2 rounded-full flex-shrink-0 ${
                           message.sender === 'user' 
                             ? 'bg-blue-600 text-white' 
-                            : 'bg-white text-gray-700 shadow-sm border'
+                            : `${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-white text-gray-700'} shadow-sm border ${isDarkMode ? 'border-gray-600' : ''}`
                         }`}>
                           {message.sender === 'user' ? (
                             <User className="h-4 w-4" />
@@ -319,7 +231,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
                         <div className={`p-3 rounded-2xl text-sm leading-relaxed ${
                           message.sender === 'user'
                             ? 'bg-blue-600 text-white rounded-br-md'
-                            : 'bg-white text-gray-800 shadow-sm border rounded-bl-md'
+                            : `${isDarkMode ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-white text-gray-800 border-gray-200'} shadow-sm border rounded-bl-md`
                         }`}>
                           <div className="whitespace-pre-wrap">{message.message}</div>
                           <div className={`text-xs mt-2 opacity-70 ${
@@ -339,10 +251,10 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
                       className="flex justify-start"
                     >
                       <div className="flex items-start space-x-2 max-w-[85%]">
-                        <div className="p-2 rounded-full bg-white text-gray-700 shadow-sm border">
+                        <div className={`p-2 rounded-full ${isDarkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'bg-white text-gray-700 border-gray-200'} shadow-sm border`}>
                           <Bot className="h-4 w-4" />
                         </div>
-                        <div className="p-3 rounded-2xl bg-white shadow-sm border rounded-bl-md">
+                        <div className={`p-3 rounded-2xl ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-sm border rounded-bl-md`}>
                           <div className="flex space-x-1">
                             <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                             <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -356,7 +268,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
                 </div>
 
                 {/* Input */}
-                <div className="p-4 bg-white border-t border-gray-200">
+                <div className={`p-4 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t`}>
                   <div className="flex space-x-2">
                     <input
                       ref={inputRef}
@@ -366,7 +278,11 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
                       onKeyPress={handleKeyPress}
                       placeholder="Ask me anything about courses, colleges, careers..."
                       disabled={isLoading}
-                      className="flex-1 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`flex-1 p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 text-gray-200 placeholder-gray-400' 
+                          : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                      }`}
                     />
                     <motion.button
                       onClick={handleSendMessage}
@@ -387,7 +303,7 @@ export const Chatbot: React.FC<ChatbotProps> = ({ isAuthenticated = false, userN
                       )}
                     </motion.button>
                   </div>
-                  <div className="mt-2 text-xs text-gray-500 text-center">
+                  <div className={`mt-2 text-xs text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                     Press Enter to send • {isAuthenticated ? 'Personalized responses active' : 'Login for personalized help'}
                   </div>
                 </div>

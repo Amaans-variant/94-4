@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EduPath Advisor
 
 An AI-powered educational guidance platform that helps students discover their perfect career path through personalized assessments, course recommendations, and college matching.
@@ -87,3 +88,6 @@ src/
 ## License
 
 This project is licensed under the MIT License.
+=======
+# 94-4
+>>>>>>> origin/main

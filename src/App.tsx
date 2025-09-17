@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Layout/Header';
 import { MobileNav } from './components/Layout/MobileNav';
@@ -17,6 +17,19 @@ function App() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const handleMobileNavToggle = () => {
     setIsMobileNavOpen(!isMobileNavOpen);
@@ -33,38 +46,43 @@ function App() {
   };
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-300">
         <Header 
           isAuthenticated={isAuthenticated} 
           onMenuToggle={handleMobileNavToggle}
           onLogout={handleLogout}
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
         />
         
         <MobileNav 
           isOpen={isMobileNavOpen}
           onClose={() => setIsMobileNavOpen(false)}
           isAuthenticated={isAuthenticated}
+          isDarkMode={isDarkMode}
+          onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
         />
 
         <main className="flex-1">
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<Landing isDarkMode={isDarkMode} />} />
             <Route path="/dashboard" element={
-              isAuthenticated ? <Dashboard /> : <Login onLogin={handleLogin} />
+              isAuthenticated ? <Dashboard user={user} isDarkMode={isDarkMode} /> : <Login onLogin={handleLogin} isDarkMode={isDarkMode} />
             } />
-            <Route path="/quiz" element={<Quiz />} />
-            <Route path="/colleges" element={<Colleges />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/timeline" element={<Timeline />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/signup" element={<Signup onSignup={handleLogin} />} />
+            <Route path="/quiz" element={<Quiz isDarkMode={isDarkMode} />} />
+            <Route path="/colleges" element={<Colleges isDarkMode={isDarkMode} />} />
+            <Route path="/courses" element={<Courses isDarkMode={isDarkMode} />} />
+            <Route path="/timeline" element={<Timeline isDarkMode={isDarkMode} />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} isDarkMode={isDarkMode} />} />
+            <Route path="/signup" element={<Signup onSignup={handleLogin} isDarkMode={isDarkMode} />} />
           </Routes>
         </main>
 
-        <Footer />
+        <Footer isDarkMode={isDarkMode} />
         <Chatbot 
           isAuthenticated={isAuthenticated} 
           userName={user?.name || 'Student'} 
+          isDarkMode={isDarkMode}
         />
       </div>
     </Router>
